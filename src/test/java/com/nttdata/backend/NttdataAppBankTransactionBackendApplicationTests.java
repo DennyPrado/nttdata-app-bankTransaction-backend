@@ -1,0 +1,13 @@
+package com.nttdata.backend;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class NttdataAppBankTransactionBackendApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
