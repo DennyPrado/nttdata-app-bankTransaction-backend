@@ -62,30 +62,15 @@ public class MovementsController {
     public ResponseEntity<BaseResponseVo> modify(@Valid @RequestBody MovementsDTO movementsDTO) throws Exception{
         HttpHeaders responseHeaders = new HttpHeaders();
         BaseResponseVo errorResponse = new BaseResponseVo();
-        String respGenNotExstID = "El ID del movimiento no existe";
         String respGenModify = "Se realiz\u00f3 la actualizaci\u00f3n exitosamente.";
         try {
-            MovementsDTO obj = movementsService.listById(movementsDTO.getMovementId());
+            movementsService.modify(movementsDTO);
+            responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
+            responseHeaders.set(MENSAJE, respGenModify);
 
-            if(obj == null) {
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.INFO.toString());
-                responseHeaders.set(MENSAJE, respGenNotExstID);
-
-                errorResponse.setMessage(respGenNotExstID);
-                errorResponse.setCode(HttpStatus.NOT_FOUND.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.NOT_FOUND);
-            }else{
-                movementsDTO.setCreatedByUser(obj.getCreatedByUser());
-                movementsDTO.setCreatedDate(obj.getCreatedDate());
-
-                movementsService.modify(movementsDTO);
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
-                responseHeaders.set(MENSAJE, respGenModify);
-
-                errorResponse.setMessage(respGenModify);
-                errorResponse.setCode(HttpStatus.OK.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
-            }
+            errorResponse.setMessage(respGenModify);
+            errorResponse.setCode(HttpStatus.OK.value());
+            return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
         }catch (Exception e){
             responseHeaders.set(MENSAJERESPUESTA, ResponseType.ERROR.toString());
             responseHeaders.set(MENSAJE, "Error al actualizar registro.");
@@ -177,27 +162,15 @@ public class MovementsController {
     public ResponseEntity<BaseResponseVo> eliminate(@PathVariable("id") Integer id) throws Exception{
         HttpHeaders responseHeaders = new HttpHeaders();
         BaseResponseVo errorResponse = new BaseResponseVo();
-        String respGenNotExstID = "El ID del movimiento a eliminar no existe";
         String respGenDelete = "Se realiz\u00f3 la eliminaci\u00f3n exitosamente.";
         try{
-            MovementsDTO obj = movementsService.listById(id);
+            movementsService.eliminate(id);
+            responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
+            responseHeaders.set(MENSAJE, respGenDelete);
 
-            if(obj == null) {
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.INFO.toString());
-                responseHeaders.set(MENSAJE, respGenNotExstID);
-
-                errorResponse.setMessage(respGenNotExstID);
-                errorResponse.setCode(HttpStatus.NOT_FOUND.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.NOT_FOUND);
-            }else{
-                movementsService.eliminate(id);
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
-                responseHeaders.set(MENSAJE, respGenDelete);
-
-                errorResponse.setMessage(respGenDelete);
-                errorResponse.setCode(HttpStatus.OK.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
-            }
+            errorResponse.setMessage(respGenDelete);
+            errorResponse.setCode(HttpStatus.OK.value());
+            return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
         }catch (Exception e){
             responseHeaders.set(MENSAJERESPUESTA, ResponseType.ERROR.toString());
             responseHeaders.set(MENSAJE, "Error al eliminar el registro.");

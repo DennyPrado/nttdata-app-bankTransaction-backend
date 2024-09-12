@@ -59,31 +59,16 @@ public class AccountsController {
     public ResponseEntity<BaseResponseVo> modify(@Valid @RequestBody AccountsDTO accountsDTO) throws Exception{
         HttpHeaders responseHeaders = new HttpHeaders();
         BaseResponseVo errorResponse = new BaseResponseVo();
-        String respGenNotExstID = "El ID de la cuenta no existe";
         String respGenModify = "Se realiz\u00f3 la actualizaci\u00f3n exitosamente.";
 
         try {
-            AccountsDTO obj = accountsService.listById(accountsDTO.getAccountId());
+            accountsService.modify(accountsDTO);
+            responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
+            responseHeaders.set(MENSAJE, respGenModify);
 
-            if(obj == null) {
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.INFO.toString());
-                responseHeaders.set(MENSAJE, respGenNotExstID);
-
-                errorResponse.setMessage(respGenNotExstID);
-                errorResponse.setCode(HttpStatus.NOT_FOUND.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.NOT_FOUND);
-            }else{
-                accountsDTO.setCreatedByUser(obj.getCreatedByUser());
-                accountsDTO.setCreatedDate(obj.getCreatedDate());
-                accountsService.modify(accountsDTO);
-
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
-                responseHeaders.set(MENSAJE, respGenModify);
-
-                errorResponse.setMessage(respGenModify);
-                errorResponse.setCode(HttpStatus.OK.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
-            }
+            errorResponse.setMessage(respGenModify);
+            errorResponse.setCode(HttpStatus.OK.value());
+            return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
         }catch (Exception e){
             responseHeaders.set(MENSAJERESPUESTA, ResponseType.ERROR.toString());
             responseHeaders.set(MENSAJE, "Error al actualizar registro.");
@@ -175,27 +160,15 @@ public class AccountsController {
     public ResponseEntity<BaseResponseVo> eliminate(@PathVariable("id") Integer id) throws Exception{
         HttpHeaders responseHeaders = new HttpHeaders();
         BaseResponseVo errorResponse = new BaseResponseVo();
-        String respGenNotExstID = "El ID de la cuenta a eliminar no existe";
         String respGenDelete = "Se realiz\u00f3 la eliminaci\u00f3n exitosamente.";
         try{
-            AccountsDTO obj = accountsService.listById(id);
+            accountsService.eliminate(id);
+            responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
+            responseHeaders.set(MENSAJE, respGenDelete);
 
-            if(obj == null) {
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.INFO.toString());
-                responseHeaders.set(MENSAJE, respGenNotExstID);
-
-                errorResponse.setMessage(respGenNotExstID);
-                errorResponse.setCode(HttpStatus.NOT_FOUND.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.NOT_FOUND);
-            }else{
-                accountsService.eliminate(id);
-                responseHeaders.set(MENSAJERESPUESTA, ResponseType.SUCCESS.toString());
-                responseHeaders.set(MENSAJE, respGenDelete);
-
-                errorResponse.setMessage(respGenDelete);
-                errorResponse.setCode(HttpStatus.OK.value());
-                return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
-            }
+            errorResponse.setMessage(respGenDelete);
+            errorResponse.setCode(HttpStatus.OK.value());
+            return new ResponseEntity<>(errorResponse, responseHeaders, HttpStatus.OK);
         }catch (Exception e){
             responseHeaders.set(MENSAJERESPUESTA, ResponseType.ERROR.toString());
             responseHeaders.set(MENSAJE, "Error al eliminar el registro.");

@@ -76,13 +76,21 @@ public class MovementsServiceImpl implements IMovementsService  {
     @Override
     public void modify(MovementsDTO movementsDTO) throws Exception {
         try{
-            movementsDTO.setLastModifiedByUser(userGeneric);
-            movementsDTO.setLastModifiedDate(new Date());
+            MovementsDTO obj = this.listById(movementsDTO.getMovementId());
 
-            Movements movements    = mapper.map(movementsDTO, Movements.class);
-            Movements resp         = movementsRepo.save(movements);
+            if(obj == null) {
+                throw new ModeloNotFoundException("El ID del movimiento no existe");
+            }else{
+                movementsDTO.setCreatedByUser(obj.getCreatedByUser());
+                movementsDTO.setCreatedDate(obj.getCreatedDate());
+                movementsDTO.setLastModifiedByUser(userGeneric);
+                movementsDTO.setLastModifiedDate(new Date());
+
+                Movements movements    = mapper.map(movementsDTO, Movements.class);
+                Movements resp         = movementsRepo.save(movements);
+            }
         }catch (Exception e){
-            throw new ModeloNotFoundException("Ocurrió un error en el proceso modify: {} " + e.getMessage());
+            throw new ModeloNotFoundException(e.getMessage());
         }
 
     }
@@ -113,9 +121,15 @@ public class MovementsServiceImpl implements IMovementsService  {
     @Override
     public void eliminate(Integer id) throws Exception {
         try{
-            movementsRepo.deleteById(id);
+            MovementsDTO obj = this.listById(id);
+
+            if(obj == null) {
+                throw new ModeloNotFoundException("El ID del movimiento a eliminar no existe");
+            }else{
+                movementsRepo.deleteById(id);
+            }
         }catch (Exception e){
-            throw new ModeloNotFoundException("Ocurrió un error en el proceso eliminate: {} " + e.getMessage());
+            throw new ModeloNotFoundException(e.getMessage());
         }
     }
 

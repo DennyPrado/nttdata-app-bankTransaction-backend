@@ -40,13 +40,21 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public void modify(AccountsDTO accountsDTO) throws Exception {
         try{
-            accountsDTO.setLastModifiedByUser(userGeneric);
-            accountsDTO.setLastModifiedDate(new Date());
+            AccountsDTO obj = this.listById(accountsDTO.getAccountId());
 
-            Accounts accounts    = mapper.map(accountsDTO, Accounts.class);
-            Accounts resp        = accountsRepo.save(accounts);
+            if(obj == null) {
+                throw new ModeloNotFoundException("El ID de la cuenta no existe");
+            }else{
+                accountsDTO.setCreatedByUser(obj.getCreatedByUser());
+                accountsDTO.setCreatedDate(obj.getCreatedDate());
+                accountsDTO.setLastModifiedByUser(userGeneric);
+                accountsDTO.setLastModifiedDate(new Date());
+
+                Accounts accounts    = mapper.map(accountsDTO, Accounts.class);
+                Accounts resp        = accountsRepo.save(accounts);
+            }
         }catch (Exception e){
-            throw new ModeloNotFoundException("Ocurrió un error en el proceso modify: {} " + e.getMessage());
+            throw new ModeloNotFoundException(e.getMessage());
         }
     }
 
@@ -76,9 +84,15 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public void eliminate(Integer id) throws Exception {
         try{
-            accountsRepo.deleteById(id);
+            AccountsDTO obj = this.listById(id);
+
+            if(obj == null) {
+                throw new ModeloNotFoundException("El ID de la cuenta a eliminar no existe");
+            }else{
+                accountsRepo.deleteById(id);
+            }
         }catch (Exception e){
-            throw new ModeloNotFoundException("Ocurrió un error en el proceso eliminate: {} " + e.getMessage());
+            throw new ModeloNotFoundException(e.getMessage());
         }
     }
 
